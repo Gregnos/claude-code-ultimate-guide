@@ -1,3 +1,9 @@
+---
+title: "Claude Code Hooks"
+description: "Event-driven scripts for automation, security blocking, and context enrichment"
+tags: [hooks, security, template, config]
+---
+
 # Claude Code Hooks
 
 Hooks are scripts that execute automatically on Claude Code events. They enable automation, block dangerous operations, and enrich context.
@@ -349,6 +355,10 @@ session-summary-config log 5             # Last 5 session summaries
 - `ccusage` (optional, for accurate cost calculation)
 - `rtk` (optional, for token savings tracking)
 
+**Screenshot** (real session output):
+
+![Session Summary v3](../../docs/images/session-summary-v3.png)
+
 **Example Output** (all sections enabled):
 ```
 ═══ Session Summary ═══════════════════
@@ -397,6 +407,21 @@ Turns: 12 (8 interactive · 4 auto) · Avg 6.7s/turn
 ```
 
 **Quick Install**: `~/.claude/hooks/session-summary-config.sh install` (copies hooks + updates settings.json)
+
+**How it compares to tweakcc's `/cost` patch**:
+
+[tweakcc](https://github.com/Piebald-AI/tweakcc) (1K+ stars) patches Claude Code's `cli.js` to re-enable `/cost` for Pro/Max subscribers. Different approach, different trade-offs:
+
+| | tweakcc `/cost` | session-summary.sh |
+|---|---|---|
+| Approach | Patches Claude Code binary | Official hooks API (no modification) |
+| Survives CC updates | No (re-apply each update) | Yes |
+| Trigger | Manual (`/cost` command) | Automatic on session exit |
+| Metrics | Cost, duration, tokens, LOC | 15 sections (cost, tokens, tools, errors, files, features, git diff, LOC, cache, RTK, ratio...) |
+| History | No | JSONL log with all metrics |
+| Dependencies | Node.js | jq (bash native) |
+
+tweakcc is a broader tool (themes, prompts, toolsets) — the `/cost` patch is one feature among many. This hook focuses specifically on session analytics with deeper metrics and zero modification of Claude Code internals.
 
 ### auto-format.sh / auto-format.ps1
 

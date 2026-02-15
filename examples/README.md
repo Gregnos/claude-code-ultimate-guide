@@ -1,3 +1,9 @@
+---
+title: "Claude Code Examples"
+description: "Annotated templates teaching why patterns work, with trade-offs and alternatives"
+tags: [template, reference, workflows, architecture]
+---
+
 # Claude Code Examples
 
 Annotated templates that teach you **why** patterns work, not just how to configure them. Each template includes comments explaining trade-offs, alternatives, and when to deviate.

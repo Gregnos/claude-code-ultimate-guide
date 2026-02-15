@@ -1,3 +1,9 @@
+---
+title: "Analytics Agent with Built-in Evaluation"
+description: "Production-ready analytics agent with automated metrics collection and safety validation"
+tags: [agents, template, testing, performance]
+---
+
 # Analytics Agent with Built-in Evaluation
 
 **Template**: Production-ready analytics agent with automated metrics collection

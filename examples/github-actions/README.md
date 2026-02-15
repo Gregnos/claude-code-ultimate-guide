@@ -1,3 +1,9 @@
+---
+title: "GitHub Actions Workflows for Claude Code"
+description: "Ready-to-use CI/CD workflows integrating Claude Code into GitHub Actions"
+tags: [ci-cd, devops, template, workflows]
+---
+
 # GitHub Actions Workflows for Claude Code
 
 Ready-to-use GitHub Actions workflows that integrate Claude Code into your CI/CD pipeline.

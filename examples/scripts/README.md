@@ -1,3 +1,9 @@
+---
+title: "Scripts"
+description: "Utility scripts for Claude Code power users: audits, health checks, and session management"
+tags: [template, debugging, security, workflows]
+---
+
 # Scripts
 
 Utility scripts for Claude Code power users.
