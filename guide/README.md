@@ -1,3 +1,9 @@
+---
+title: "Guide Documentation"
+description: "Index of all core documentation files for mastering Claude Code"
+tags: [guide, reference]
+---
+
 # Guide Documentation
 
 Core documentation for mastering Claude Code.

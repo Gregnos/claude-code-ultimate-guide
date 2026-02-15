@@ -1,3 +1,9 @@
+---
+title: "Search Tools Cheatsheet"
+description: "Quick reference for choosing between rg, grepai, Serena and ast-grep"
+tags: [cheatsheet, search, reference]
+---
+
 # Search Tools Cheatsheet (1-Page Reference)
 
 > **Quick reference for choosing between rg, grepai, Serena & ast-grep**

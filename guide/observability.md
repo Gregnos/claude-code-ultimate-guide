@@ -1,3 +1,9 @@
+---
+title: "Session Observability & Monitoring"
+description: "Track Claude Code usage, estimate costs, and identify patterns across development sessions"
+tags: [observability, guide, performance]
+---
+
 # Session Observability & Monitoring
 
 > Track Claude Code usage, estimate costs, and identify patterns across your development sessions.

@@ -1,3 +1,9 @@
+---
+title: "Claude Code — Visual Reference"
+description: "ASCII diagrams consolidating key Claude Code concepts in one visual overview"
+tags: [reference, architecture, cheatsheet]
+---
+
 # Claude Code — Visual Reference
 
 All diagrams in one place. Quick visual overview of Claude Code's key concepts.

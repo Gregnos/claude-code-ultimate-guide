@@ -1,3 +1,9 @@
+---
+title: "Development Methodologies Reference"
+description: "Quick reference for 15 structured AI-assisted development methodologies including TDD, SDD, and BDD"
+tags: [reference, tdd, design-patterns, workflows]
+---
+
 # Development Methodologies Reference
 
 > **Confidence**: Tier 2 — Validated by multiple production reports and official documentation.

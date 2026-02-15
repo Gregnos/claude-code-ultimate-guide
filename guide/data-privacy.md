@@ -1,3 +1,9 @@
+---
+title: "Data Privacy & Retention Guide"
+description: "What data Claude Code sends to Anthropic servers and how to protect sensitive information"
+tags: [privacy, security, guide]
+---
+
 # Data Privacy & Retention Guide
 
 > **Critical**: Everything you share with Claude Code is sent to Anthropic servers. This guide explains what data leaves your machine and how to protect sensitive information.

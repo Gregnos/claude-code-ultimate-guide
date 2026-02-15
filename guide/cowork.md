@@ -1,3 +1,9 @@
+---
+title: "Claude Cowork: Agentic Desktop for Knowledge Work"
+description: "Summary of Claude's agentic desktop feature for non-technical knowledge workers"
+tags: [guide, agents, workflows]
+---
+
 # Claude Cowork: Agentic Desktop for Knowledge Work
 
 > **📦 Complete documentation migrated to dedicated repository**

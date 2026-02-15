@@ -1,3 +1,9 @@
+---
+title: "Learning to Code with AI: The Conscious Developer's Guide"
+description: "Research-based guide for junior developers learning to code effectively with AI assistance"
+tags: [guide, workflows]
+---
+
 # Learning to Code with AI: The Conscious Developer's Guide
 
 > **Confidence**: Tier 2 — Based on academic research (2023-2025) and educator feedback

@@ -1,3 +1,9 @@
+---
+title: "Claude Code Cheatsheet"
+description: "One-page printable daily essentials for maximum Claude Code productivity"
+tags: [cheatsheet, reference]
+---
+
 # Claude Code Cheatsheet
 
 **1 printable page** - Daily essentials for maximum productivity

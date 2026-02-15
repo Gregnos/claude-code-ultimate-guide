@@ -1,3 +1,9 @@
+---
+title: "AI Ecosystem: Maximizing Claude Code with Complementary Tools"
+description: "When to use Claude Code vs complementary AI tools and how to chain them for optimal workflows"
+tags: [ai-ecosystem, guide, workflows, integration]
+---
+
 # AI Ecosystem: Maximizing Claude Code with Complementary Tools
 
 > **Reading time**: ~25 minutes

@@ -1,3 +1,9 @@
+---
+title: "The Ultimate Claude Code Guide"
+description: "Comprehensive self-contained guide to mastering Claude Code from zero to power user"
+tags: [guide, reference, workflows, agents, hooks, mcp, security]
+---
+
 # The Ultimate Claude Code Guide
 
 > A comprehensive, self-contained guide to mastering Claude Code - from zero to power user.

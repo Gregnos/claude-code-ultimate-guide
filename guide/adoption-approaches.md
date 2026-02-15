@@ -1,3 +1,9 @@
+---
+title: "Choosing Your Adoption Approach"
+description: "Starting points for team adoption patterns and CLAUDE.md configuration strategies"
+tags: [guide, config, workflows]
+---
+
 # Choosing Your Adoption Approach
 
 > **Disclaimer**: Claude Code is young (~1 year). Nobody has definitive answers yet — including this guide. These are starting points based on observed patterns, not proven best practices. Adapt heavily to your context.

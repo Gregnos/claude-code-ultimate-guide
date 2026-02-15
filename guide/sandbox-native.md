@@ -1,3 +1,9 @@
+---
+title: "Native Sandboxing in Claude Code"
+description: "Understanding and configuring native process-level sandboxing in Claude Code"
+tags: [security, sandbox, guide]
+---
+
 # Native Sandboxing in Claude Code
 
 > **Confidence**: Tier 1 — Official Anthropic documentation

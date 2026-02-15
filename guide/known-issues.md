@@ -1,3 +1,9 @@
+---
+title: "Known Issues & Critical Bugs"
+description: "Verified critical issues affecting Claude Code users from community reports and official communications"
+tags: [reference, security, debugging]
+---
+
 # Known Issues & Critical Bugs
 
 This document tracks verified, critical issues affecting Claude Code users based on community reports and official communications.

@@ -1,3 +1,9 @@
+---
+title: "Claude Code Release History"
+description: "Condensed changelog of official Claude Code releases with highlights and breaking changes"
+tags: [reference, release]
+---
+
 # Claude Code Release History
 
 > Condensed changelog of Claude Code official releases.

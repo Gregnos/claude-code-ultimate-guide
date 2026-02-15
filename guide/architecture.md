@@ -1,3 +1,9 @@
+---
+title: "How Claude Code Works: Architecture & Internals"
+description: "Technical deep-dive into Claude Code internal mechanisms and architecture"
+tags: [architecture, guide, performance]
+---
+
 # How Claude Code Works: Architecture & Internals
 
 > A technical deep-dive into Claude Code's internal mechanisms, based on official Anthropic documentation and verified community analysis.

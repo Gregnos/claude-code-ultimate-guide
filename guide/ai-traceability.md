@@ -1,3 +1,9 @@
+---
+title: "AI Code Traceability & Attribution"
+description: "Industry standards, tools, and templates for AI-generated code attribution policies"
+tags: [guide, git, workflows]
+---
+
 # AI Code Traceability & Attribution
 
 > **TL;DR**: As AI-generated code becomes ubiquitous, projects need clear attribution policies. This guide covers industry standards (LLVM, Ghostty, Fedora), practical tools (git-ai), and implementation templates.

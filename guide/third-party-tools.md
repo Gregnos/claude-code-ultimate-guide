@@ -1,3 +1,9 @@
+---
+title: "Third-Party Tools for Claude Code"
+description: "Community tools for token tracking, session management, configuration, and alternative UIs"
+tags: [reference, integration, plugin]
+---
+
 # Third-Party Tools for Claude Code
 
 > Community tools for token tracking, session management, configuration, and alternative UIs.

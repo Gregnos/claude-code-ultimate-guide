@@ -1,3 +1,9 @@
+---
+title: "Sandbox Isolation for Coding Agents"
+description: "Running Claude Code safely in isolated environments with Docker, native sandbox, and cloud solutions"
+tags: [security, sandbox, devops, guide]
+---
+
 # Sandbox Isolation for Coding Agents
 
 > **Confidence**: Tier 2 — Official Docker docs + verified vendor documentation

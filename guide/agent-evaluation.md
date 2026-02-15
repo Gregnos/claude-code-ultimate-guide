@@ -1,3 +1,9 @@
+---
+title: "Agent Evaluation"
+description: "Metrics, patterns, and tools for measuring custom agent effectiveness"
+tags: [agents, testing, guide]
+---
+
 # Agent Evaluation
 
 **Quick nav**: [Why Evaluate?](#why-evaluate-agents) · [Metrics to Track](#metrics-to-track) · [Implementation](#implementation-patterns) · [Example](#example-agent-with-evaluation) · [Tools](#tools--references)

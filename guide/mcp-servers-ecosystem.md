@@ -1,3 +1,9 @@
+---
+title: "MCP Servers Ecosystem"
+description: "Validated community MCP servers evaluated for production readiness and security"
+tags: [mcp, reference, integration]
+---
+
 # MCP Servers Ecosystem
 
 **Last updated**: February 2026 • **Next review**: March 2026

@@ -1,3 +1,9 @@
+---
+title: "DevOps & SRE with Claude Code"
+description: "FIRE framework for infrastructure diagnosis and DevOps workflows with Claude Code"
+tags: [devops, guide, ci-cd, workflows]
+---
+
 # DevOps & SRE with Claude Code
 
 **Reading time**: 30 minutes

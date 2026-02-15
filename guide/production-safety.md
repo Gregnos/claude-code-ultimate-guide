@@ -1,3 +1,9 @@
+---
+title: "Production Safety Rules"
+description: "Non-negotiable safety rules for teams deploying Claude Code in production environments"
+tags: [security, guide, devops]
+---
+
 # Production Safety Rules
 
 > **Audience**: Teams deploying Claude Code in production environments.

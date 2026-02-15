@@ -1,3 +1,9 @@
+---
+title: "Security Hardening Guide"
+description: "Active threats, injection defense, and CVE-based security hardening for Claude Code"
+tags: [security, guide, hooks]
+---
+
 # Security Hardening Guide
 
 > **Confidence**: Tier 2 — Based on CVE disclosures, security research (2024-2026), and community validation
