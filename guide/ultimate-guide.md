@@ -8198,15 +8198,24 @@ A Stop hook that automatically displays a formatted summary with:
 - `ccusage` (optional, for accurate cost calculation via Claude Code Usage tool)
 - bash 3.2+ (macOS compatible)
 
-**Configuration**:
+**Plugin Install (Recommended)**:
+
+```bash
+claude plugin marketplace add FlorianBruniaux/claude-code-plugins
+claude plugin install session-summary@florian-claude-tools
+```
+
+Hooks are auto-wired for `SessionStart` (RTK baseline) and `SessionEnd` (summary display). No manual configuration needed.
+
+**Manual Configuration** (alternative):
 
 ```json
 {
   "hooks": {
-    "Stop": [{
+    "SessionEnd": [{
       "hooks": [{
         "type": "command",
-        "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-summary.sh"
+        "command": "~/.claude/hooks/session-summary.sh"
       }]
     }]
   }
@@ -8327,6 +8336,13 @@ ccusage session --id <session-id> --json --offline
 
 #### Installation
 
+**Plugin system** (recommended):
+```bash
+claude plugin marketplace add FlorianBruniaux/claude-code-plugins
+claude plugin install session-summary@florian-claude-tools
+```
+
+**Manual** (alternative):
 ```bash
 # Copy hook
 cp examples/hooks/bash/session-summary.sh .claude/hooks/
