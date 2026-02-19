@@ -22,7 +22,7 @@ Annotated templates that teach you **why** patterns work, not just how to config
 | [`config/`](./config/) | Settings, MCP, git templates | 5 |
 | [`memory/`](./memory/) | CLAUDE.md memory file templates | 2 |
 | [`scripts/`](./scripts/) | Diagnostic & utility scripts | 13 |
-| [`github-actions/`](./github-actions/) | CI/CD workflows | 3 |
+| [`github-actions/`](./github-actions/) | CI/CD workflows | 4 |
 | [`workflows/`](./workflows/) | Advanced development workflows | 3 |
 | [`plugins/`](./plugins/) | Community plugins (SE-CoVe, claude-mem) | 2 |
 | [`integrations/`](./integrations/) | External tool integrations (Agent Vibes TTS) | 4 |
@@ -225,10 +225,11 @@ Security-first: 12 security hooks, 8 productivity hooks, 5 automation hooks, 5 m
 
 > **See [scripts/README.md](./scripts/README.md) for detailed usage**
 
-### GitHub Actions (3)
+### GitHub Actions (4)
 
 | File | Trigger | Purpose |
 |------|---------|---------|
+| [claude-code-review.yml](./github-actions/claude-code-review.yml) ⭐ | PR open/sync + `/claude-review` comment | Prompt-based review (externalized prompt + anti-hallucination protocol) |
 | [claude-pr-auto-review.yml](./github-actions/claude-pr-auto-review.yml) | PR open/update | Auto code review with inline comments |
 | [claude-security-review.yml](./github-actions/claude-security-review.yml) | PR open/update | Security-focused scan (OWASP) |
 | [claude-issue-triage.yml](./github-actions/claude-issue-triage.yml) | Issue opened | Auto-triage with labels and severity |

@@ -28,6 +28,13 @@ deep_dive:
   review_auto_fix_loop: "guide/workflows/iterative-refinement.md:347"
   # Review Plan Command (Garry Tan-inspired, Feb 2026)
   review_plan_command: "examples/commands/review-plan.md"
+  # GitHub Actions: Prompt-Based Code Review (Feb 2026)
+  github_actions_code_review_workflow: "examples/github-actions/claude-code-review.yml"
+  github_actions_code_review_prompt: "examples/github-actions/prompts/code-review.md"
+  github_actions_code_review_pattern: "externalized prompt + anti-hallucination protocol + /claude-review on-demand trigger"
+  github_actions_code_review_tools: "Read, Glob, Grep + GitHub PR inspection (read-only)"
+  github_actions_code_review_auth: "OAuth token (Claude Max plan, 0$ API) or ANTHROPIC_API_KEY"
+  github_actions_cost_per_review: "0$ with OAuth/Max plan; ~0.05-0.15$ with API key (Sonnet, ~5K tokens diff)"
   # Rules Templates (auto-loaded .claude/rules/)
   rules_templates_directory: "examples/rules/"
   rules_architecture_review: "examples/rules/architecture-review.md"
