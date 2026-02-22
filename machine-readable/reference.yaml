@@ -602,6 +602,11 @@ deep_dive:
   dual_instance_pattern: "Vertical separation (planner vs implementer) - orthogonal to Boris horizontal scaling"
   dual_instance_cost: "$100-200/month (vs $500-1K Boris pattern)"
   dual_instance_audience: "Solo devs, spec-heavy work, quality > speed"
+  # Boris Tane Pattern (Annotation Cycle, Feb 2026)
+  annotation_cycle_pattern: "guide/workflows/plan-driven.md#the-annotation-cycle"
+  custom_markdown_plans: "guide/workflows/plan-driven.md#why-custom-plans-over-plan"
+  boris_tane_source: "https://boristane.com/blog/how-i-use-claude-code/"
+  boris_tane_author: "Boris Tane (Engineering Lead, Cloudflare)"
   # External resource: Claude Code team tips (paddo.dev, Feb 2026)
   team_tips_paddo: "https://paddo.dev/blog/claude-code-team-tips/"
   team_tips_paddo_source: "Boris Cherny thread (x.com/bcherny/status/2017742741636321619)"
@@ -855,6 +860,10 @@ deep_dive:
   security_audit_command: "examples/commands/security-audit.md"  # Full 6-phase security audit (score /100)
   security_threat_db: "examples/commands/resources/threat-db.yaml"  # Threat intelligence database (authors, skills, CVEs, patterns)
   security_update_threat_db: "examples/commands/update-threat-db.md"  # /update-threat-db — research & update threat database
+  security_cc_scanner: "guide/security-hardening.md:776"  # Claude Code Security (research preview) — Anthropic native vuln scanner, adversarial validation, patch suggestions
+  security_patcher_agent: "examples/agents/security-patcher.md"  # Agent: applies patches from security-auditor findings, human approval gate, Write/Edit tools
+  security_gate_hook: "examples/hooks/bash/security-gate.sh"  # PreToolUse hook: blocks 7 vuln patterns at write time (SQLi, XSS, hardcoded secrets, eval, weak hash, cmd injection, path traversal)
+  security_pr_review_workflow: "guide/security-hardening.md:706"  # PR security review workflow — 3-agent pipeline, git hook integration
   agent_validation_checklist: 3850  # Agent validation section in ultimate-guide.md
   git_mcp_guide: "guide/mcp-servers-ecosystem.md:102"  # Git MCP server documentation
 

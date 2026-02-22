@@ -8,6 +8,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **guide/workflows/plan-driven.md — Section "Advanced: Custom Markdown Plans (Boris Tane Pattern)"** (+169 lignes)
+  - Workflow 3 phases : Research emphatic → Annotation Cycle → Implémentation mécanique
+  - Table comparative `/plan` natif vs custom `.md` (critères de choix)
+  - Diagramme Annotation Cycle avec boucle, guard prompt et critères de sortie
+  - Phase 1 : pourquoi le langage emphatique change le comportement de Claude
+  - Phase 2 : structure plan.md Aristote-ready, exit criteria, quote Boris Tane
+  - Phase 3 : mindset mécanique, feedback terse
+  - Table techniques complémentaires (cherry-picking, scope trimming, revert & re-scope)
+  - Source : Boris Tane (Engineering Lead @ Cloudflare), Feb 2026
+- **guide/ultimate-guide.md — AI Code Disclosure Policy** (section 3.5)
+  - Seuil >10 lignes consécutives = déclaration obligatoire
+  - Template PR : "Ce que l'IA a fait / Ce que j'ai fait"
+  - Graduated enforcement par niveau (junior → senior)
+  - Anti-pattern "vibe coding caché" documenté
+- **guide/ultimate-guide.md — claude-mem avec Gemini** (section claude-mem)
+  - Alternative Gemini 2.5 Flash : $14/mois vs Haiku $102/mois (-86%)
+  - Instructions de configuration via dashboard localhost:37777
+  - Tableau comparatif modèles avec coût mensuel mesuré (400 sessions/mois)
+- **guide/ultimate-guide.md — claude-mem gotchas critiques** (section claude-mem)
+  - Hooks coexistence : avant/après JSON, risque d'overwrite silencieux documenté
+  - Fail-open v9.1.0+ : worker down ne bloque pas Claude Code, restart instructions
+- **guide/methodologies.md** : cross-reference vers Boris Tane Pattern depuis section Plan-First
+- **machine-readable/reference.yaml** : 4 nouvelles entrées (`annotation_cycle_pattern`, `custom_markdown_plans`, `boris_tane_source`, `boris_tane_author`)
+- **docs/resource-evaluations/boris-tane-how-i-use-claude-code.md** : évaluation formelle (score 4/5, fact-check, décision d'intégration)
+- **docs/resource-evaluations/aristote-ai-instructions-patterns.md** : analyse patterns production Méthode Aristote (24 fichiers ai-instructions)
+- **guide/security-hardening.md — Part 4: Integration** (+104 lignes)
+  - **4.1 PR Security Review Workflow** : pipeline 3 agents (security-auditor → data flow trace → security-patcher), prompt prêts à l'emploi
+  - Tableau par type de changement (API endpoint, DB query, auth, file upload, lib tiers) avec niveaux de risque
+  - Hook `pre-push` git pour alerter sur les fichiers sensibles (auth, payment, token, session)
+  - **Claude Code Security (Research Preview)** : présentation de la feature Anthropic en waitlist, comparaison avec Security Auditor Agent
+- **examples/agents/security-patcher.md** : nouvel agent (companion du security-auditor)
+  - Scope limité : applique les patches identifiés par security-auditor, jamais en autonomie
+  - Séparation des responsabilités explicite : auditor détecte, patcher corrige
+  - Propose les patches pour review humaine, n'applique rien sans approbation
+- **examples/hooks/bash/security-gate.sh** : nouveau hook PreToolUse
+  - Détecte les anti-patterns de sécurité applicative avant écriture dans les fichiers source
+  - Complémente `dangerous-actions-blocker.sh` (ops système) — focus sur le code applicatif
+  - Exit 0 = allow, Exit 2 = block avec message contextuel
+- **guide/workflows/pdf-generation.md** : diagramme "Output Formats & Commands" (+48 lignes)
+  - Table ASCII 3 colonnes (format / commande / sortie) avec distinction PDF standard vs stylé
+  - Commandes EPUB, aperçu en live, batch loop avec résumé d'erreurs
+- **examples/skills/pdf-generator.md** : diagramme pipeline de génération (+28 lignes)
+  - Schéma ASCII SOURCE → Quarto → template → Typst → PDF avec annotations taille de sortie
+- **docs/resource-evaluations/2026-02-22-boris-cherny-worktree-tips-reddit.md** : évaluation Reddit/Twitter Boris Cherny (créateur Claude Code) — 5 worktree tips, 40.2K views
+- **docs/resource-evaluations/2026-02-22-guillaume-moigneu-worktree-linkedin.md** : évaluation LinkedIn Guillaume Moigneu (Solution Architect @ Upsun) — built-in git worktree support
+
 - **guide/observability.md — 3 nouvelles sections monitoring** (+214 lignes)
   - **Activity Monitoring** : audit des actions Claude Code via les JSONL de session — quels fichiers lus, commandes exécutées, URLs fetchées. Requêtes `jq` prêtes à l'emploi. Tableau des patterns sensibles (.env, rm -rf, WebFetch externe)
   - **External Monitoring Tools** : tableau comparatif ccusage / claude-code-otel / Akto / MLflow / ccboard avec decision guide et exemples d'install

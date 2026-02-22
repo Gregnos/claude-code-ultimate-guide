@@ -703,12 +703,114 @@ echo -e "test\u200Bhidden" | grep -P '[\x{200B}-\x{200D}]'
 
 ---
 
+## Part 4: Integration (In Your Daily Workflow)
+
+### 4.1 PR Security Review Workflow
+
+The most high-ROI use of Claude Code for security: systematic review of every PR before merge. Takes 2-3 minutes, catches issues before they reach production.
+
+#### Setup — Add to your PR checklist
+
+```bash
+# Run from repo root before merging any PR
+git diff main...HEAD > /tmp/pr-diff.txt
+```
+
+Then in Claude Code:
+
+```
+Review the security implications of this PR diff.
+Focus: injection, auth bypass, secrets exposure, insecure deserialization.
+File: /tmp/pr-diff.txt
+Use the security-auditor agent for the analysis.
+```
+
+#### The 3-agent PR security pipeline
+
+For high-stakes PRs (auth changes, payment flows, data access), run in sequence:
+
+```
+Step 1 — Threat surface scan:
+"Use the security-auditor agent to analyze all changed files in this diff.
+ Report CRITICAL and HIGH findings only. No fixes."
+
+Step 2 — Data flow trace:
+"For each CRITICAL finding from the audit, trace the full data flow:
+ where does user input enter? where does it reach? what sanitization exists?"
+
+Step 3 — Patch (if findings):
+"Use the security-patcher agent with the findings report above.
+ Propose patches for CRITICAL findings only. Do not apply without my review."
+```
+
+#### What to always check in a security PR review
+
+| Change type | Risk | What to look for |
+|-------------|------|-----------------|
+| New API endpoint | High | Auth check, input validation, rate limiting |
+| DB query change | High | Parameterized queries, index exposure |
+| Auth logic | Critical | Token validation, session management, privilege escalation |
+| File upload | High | MIME type, size limit, path traversal |
+| Third-party lib added | Medium | CVE check (`npm audit`, `cargo audit`) |
+| Env var added | Medium | Not hardcoded, in `.gitignore`, in `.env.example` |
+
+#### Integration with git hooks
+
+Automate the trigger in `.git/hooks/pre-push`:
+
+```bash
+#!/bin/bash
+# Pre-push: remind to run security review for auth/payment changes
+CHANGED=$(git diff origin/main...HEAD --name-only)
+
+if echo "$CHANGED" | grep -qE "(auth|payment|token|session|password|crypt)"; then
+    echo "⚠️  Security-sensitive files changed. Run /security-audit before pushing."
+    echo "   Files: $(echo "$CHANGED" | grep -E '(auth|payment|token|session)')"
+    # Warning only — does not block push
+fi
+exit 0
+```
+
+---
+
+## Claude Code as Security Scanner (Research Preview)
+
+Beyond securing Claude Code itself, Anthropic offers a dedicated vulnerability scanning feature: **Claude Code Security**.
+
+> ⚠️ **Research preview** — Access via waitlist only. Not yet in GA. Details: [claude.com/solutions/claude-code-security](https://claude.com/solutions/claude-code-security)
+
+### What it does
+
+- Scans your entire codebase for vulnerabilities using contextual reasoning (traces data flows cross-files)
+- **Adversarial validation**: findings are challenged internally before surfacing to reduce false positives
+- Generates patch suggestions that preserve code structure and style
+- Requires human review and approval before any fix is applied
+
+### How it differs from the Security Auditor Agent
+
+| | Security Auditor Agent (today) | Claude Code Security (preview) |
+|---|---|---|
+| **Access** | Available now, any plan | Waitlist only |
+| **Scope** | OWASP Top 10, rule-based | Whole codebase, semantic analysis |
+| **Patches** | No (reports only) | Yes (with human approval) |
+| **Model** | Configurable | Anthropic's most capable models |
+
+### When to use which
+
+- **Now** → Use the [Security Auditor Agent](../examples/agents/security-auditor.md) + [Security Patcher Agent](../examples/agents/security-patcher.md) for full detect-then-patch coverage
+- **Now** → Use the [Security Gate Hook](../examples/hooks/bash/security-gate.sh) to block vulnerable patterns at write time
+- **Waitlist** → Join the preview for deeper semantic analysis once your team needs it
+
+---
+
 ## See Also
 
 - [Data Privacy Guide](./data-privacy.md) — Retention policies, compliance, what data leaves your machine
 - [AI Traceability](./ai-traceability.md) — PromptPwnd vulnerability, CI/CD security, attribution policies
 - [Security Checklist Skill](../examples/skills/security-checklist.md) — OWASP Top 10 patterns for code review
-- [Security Auditor Agent](../examples/agents/security-auditor.md) — Automated vulnerability scanning
+- [Security Auditor Agent](../examples/agents/security-auditor.md) — Automated vulnerability detection (read-only)
+- [Security Patcher Agent](../examples/agents/security-patcher.md) — Applies patches from audit findings (human approval required)
+- [Security Gate Hook](../examples/hooks/bash/security-gate.sh) — Blocks vulnerable code patterns at write time (7 patterns)
 - [Ultimate Guide §7.4](./ultimate-guide.md#74-security-hooks) — Hook system basics
 - [Ultimate Guide §8.6](./ultimate-guide.md#86-mcp-security) — MCP security overview
 
