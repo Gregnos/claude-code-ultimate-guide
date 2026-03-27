@@ -142,9 +142,9 @@ Code Review is billed on token usage, **separately from your plan's included usa
 ## Cross-reference
 
 For manual code review workflows (CLI, no Teams/Enterprise required):
-- [Multi-agent code review workflow](../ultimate-guide.md#multi-agent-code-review) — DIY agent teams via CLI
+- [Multi-agent code review workflow](#split-role-sub-agents) — DIY agent teams via CLI
 - [GitHub Actions integration](./github-actions.md) — custom CI/CD automation (self-hosted alternative to this managed service)
-- [GitLab CI/CD](/en/gitlab-ci-cd) — self-hosted Claude integration for GitLab pipelines
+- GitLab CI/CD — self-hosted Claude integration for GitLab pipelines
 - Code Review plugin — on-demand local reviews before pushing (available in the plugin marketplace)
 
 ---

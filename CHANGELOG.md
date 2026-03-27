@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- `guide/workflows/code-review.md` cross-reference section: replaced broken `../ultimate-guide.md#multi-agent-code-review` anchor (heading didn't exist) with bare `#split-role-sub-agents` so the landing build script resolves it to `/guide/ultimate-guide/04-agents/#split-role-sub-agents`. Removed broken `/en/gitlab-ci-cd` hyperlink (Anthropic docs URL, not valid on cc.bruniaux.com) — kept as plain text.
+
 ## [3.38.0] - 2026-03-27
 
 ### Added
