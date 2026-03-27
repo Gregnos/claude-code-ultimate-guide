@@ -2,8 +2,8 @@
 # For use with /security-check and /security-audit commands
 # Manually maintained — update after new security advisories
 
-version: "2.9.0"
-updated: "2026-03-23"
+version: "2.10.0"
+updated: "2026-03-27"
 sources:
   - name: "Snyk ToxicSkills"
     url: "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
@@ -200,6 +200,24 @@ sources:
   - name: "Miggo.io - CVE-2026-27826 MCP Atlassian SSRF"
     url: "https://www.miggo.io/vulnerability-database/cve/CVE-2026-27826"
     date: "2026-03-11"
+  - name: "Rogue Security - 30 CVEs in 60 Days MCP Security Reckoning"
+    url: "https://www.rogue.security/blog/30-cves-60-days-mcp-security-reckoning"
+    date: "2026-03-23"
+  - name: "Silverfort - ClawHub Ranking Manipulation Vulnerability"
+    url: "https://www.silverfort.com/blog/clawhub-vulnerability-enables-attackers-to-manipulate-rankings-to-become-the-number-one-skill/"
+    date: "2026-03-24"
+  - name: "Cisco DefenseClaw - Open Source Secure Agent Framework"
+    url: "https://newsroom.cisco.com/content/r/newsroom/en/us/a/y2026/m03/cisco-reimagines-security-for-the-agentic-workforce.html"
+    date: "2026-03-23"
+  - name: "SentinelOne - CVE-2025-59834 ADB MCP Server RCE"
+    url: "https://www.sentinelone.com/vulnerability-database/cve-2025-59834/"
+    date: "2025-09-25"
+  - name: "Cloud Security Alliance - MCP Authentication Vacuum"
+    url: "https://cloudsecurityalliance.org/blog/2026/03/24/the-agentic-trust-deficit-why-mcp-s-authentication-vacuum-demands-a-new-security-paradigm"
+    date: "2026-03-24"
+  - name: "CrowdStrike - Agentic Tool Chain Attacks"
+    url: "https://www.crowdstrike.com/en-us/blog/how-agentic-tool-chain-attacks-threaten-ai-agent-security/"
+    date: "2026-03-25"
 
 # ═══════════════════════════════════════════════════════════════
 # MALICIOUS AUTHORS (confirmed by security researchers)
@@ -1048,9 +1066,30 @@ cve_database:
     component: "MCP Atlassian (mcp-atlassian, Confluence and Jira)"
     severity: "high"
     description: "Unauthenticated SSRF via header injection — prior to version 0.17.0, attacker can forge server-side requests to internal Atlassian or adjacent network resources without authentication"
-    source: "Miggo.io (2026-03-11)"
+    source: "Miggo.io (2026-03-11); Rogue Security MCPwnfluence chain analysis (2026-03-23)"
     fixed_in: "0.17.0"
     mitigation: "Update mcp-atlassian to >= 0.17.0; restrict MCP Atlassian to trusted networks; audit outbound requests from Atlassian MCP server"
+    chain_notes: "Chains with CVE-2026-27825 (unrestricted file write) for MCPwnfluence RCE — two requests from local network achieve RCE as root; particularly dangerous on public WiFi"
+
+  - id: "CVE-2026-27825"
+    component: "MCP Atlassian (mcp-atlassian)"
+    severity: "critical"
+    cvss: 9.1
+    description: "Unrestricted file write in mcp-atlassian — chains with CVE-2026-27826 (SSRF) for full unauthenticated RCE as root via MCPwnfluence attack chain; requires only two HTTP requests from local network; no authentication needed"
+    source: "Pluto Security / Rogue Security MCPwnfluence (2026-03-23)"
+    fixed_in: "0.17.0"
+    mitigation: "Update mcp-atlassian to >= 0.17.0; do not expose MCP Atlassian on public or untrusted networks; monitor for unexpected file writes"
+    chain_notes: "Part of MCPwnfluence chain: CVE-2026-27826 (SSRF) + CVE-2026-27825 (file write) = RCE as root; CVSS 9.1 for the chain"
+
+  # --- ADB MCP Server (Android Debug Bridge) ---
+  - id: "CVE-2025-59834"
+    component: "Srmorete adb-mcp (ADB MCP Server, Node.js)"
+    severity: "critical"
+    description: "Command injection in ADB MCP Server versions 0.1.0 and prior — user-controlled input in tool definitions passed to system commands via string concatenation without sanitization; shell metacharacters (;, |, &&, $(), backticks) enable arbitrary command execution with MCP server process privileges; network-accessible, no authentication required, low complexity"
+    source: "NVD (2025-09-25); SentinelOne (2026-03-24)"
+    fixed_in: "commit 041729c or later"
+    cwe: "CWE-77"
+    mitigation: "Update adb-mcp to patched version (commit 041729c+); restrict network access to trusted sources only; implement WAF with command injection rules; audit logs for exploitation attempts"
 
   # --- Bun runtime (npm lifecycle bypass) ---
   - id: "CVE-2026-24910"
@@ -1687,6 +1726,26 @@ attack_techniques:
     source: "Security Affairs / Oasis Security (2026-02-26 to 2026-03-02)"
     mitigation: "Update OpenClaw to >= v2026.2.13; require authentication for all WebSocket endpoints including log-write; treat log files as untrusted input when parsed by the AI agent; sandbox log file read context to prevent prompt injection"
 
+  - id: "T019"
+    name: "Marketplace Ranking Manipulation"
+    description: "Attacker exploits exposed backend mutation endpoint in AI agent skill marketplace to inflate download counts without limit, artificially promoting a malicious skill to the #1 position and gaming trust signals. Relies on misconfigured framework function visibility (e.g. Convex public mutation instead of internal). Bypasses rate limiting and deduplication checks."
+    examples:
+      - "ClawHub Convex framework: downloads:increment function exposed as public RPC instead of internal private function; attacker sends unauthenticated curl requests to inflate any skill's counter; malicious Outlook Graph Integration skill reached 3,900 executions across 50+ cities and multiple public companies within 6 days"
+      - "Any skill registry using a backend framework with misconfigured mutation visibility"
+    affected_platforms: ["ClawHub (patched 2026-03-17)"]
+    source: "Silverfort (2026-03-24)"
+    mitigation: "Audit all marketplace backend mutation functions for unintended public exposure; enforce authentication on download increment endpoints; implement server-side rate limiting and anomaly detection on sudden download spikes; require human review before promoting skills with rapid download growth"
+
+  - id: "T020"
+    name: "Agentic Tool Chain Reasoning Layer Attack"
+    description: "Attacker manipulates an AI agent's reasoning and tool-selection layer rather than exploiting tool code directly. By crafting malicious language, poisoned metadata, or injected context, attackers guide the agent's decision-making to select attacker-preferred tools, skip security checks, install malicious packages, modify configuration files, or exfiltrate data — all while appearing to perform legitimate development tasks."
+    examples:
+      - "Poisoned repository README files and package descriptions cause coding agents to install malicious npm packages, modify config files, and exfiltrate SSH keys"
+      - "Manipulating tool descriptions or MCP server metadata to bias agent tool selection toward attacker-controlled servers"
+      - "Injecting context that causes agents to skip validation steps or prefer unsafe code patterns"
+    source: "CrowdStrike (2026-03-25)"
+    mitigation: "Treat all external content (READMEs, package descriptions, issue comments) as untrusted input; implement tool governance with allowlists of approved MCP servers; use behavioral monitoring to detect unexpected tool call sequences; require human-in-the-loop for high-impact actions triggered by external content"
+
 # ═══════════════════════════════════════════════════════════════
 # SCANNING TOOLS
 # ═══════════════════════════════════════════════════════════════
@@ -1950,6 +2009,67 @@ scanning_tools:
       - "Commercial product — requires Mend.io subscription"
       - "Code scanning focus — does not scan SKILL.md or MCP configs directly"
 
+  - name: "Cisco DefenseClaw"
+    vendor: "Cisco"
+    type: "cli + runtime"
+    url: "https://github.com/cisco-ai-defense/defenseclaw"
+    capabilities:
+      - "Open-source secure agent framework (available 2026-03-27)"
+      - "Pre-deployment scanning: every skill/tool/plugin scanned and sandboxed before deployment"
+      - "Skills Scanner: checks against block/allow lists, generates manifest"
+      - "MCP Scanner: verifies MCP servers for malicious actions before install"
+      - "a2a-scanner: agent-to-agent communication security"
+      - "CodeGuard: static analysis on AI-generated code"
+      - "AI BoM (Bill of Materials): inventory of all skills and MCP servers"
+      - "Runtime threat detection: inspects every message in/out of agent during execution"
+      - "Enforcement: sandbox permissions revoked, files quarantined, connections denied within 2 seconds"
+      - "Integrates with NVIDIA OpenShell for automated runtime security"
+    limitations:
+      - "New project — community adoption data limited"
+      - "Focused on pre-deployment + runtime; does not cover ClawHub marketplace scanning"
+    notes: "Announced and available 2026-03-27; addresses T001 (Tool Poisoning), T017 (Shadow MCP), T013 (Autonomous Safety Bypass)"
+
+  - name: "hackmyagent"
+    vendor: "opena2a-org (community)"
+    type: "cli"
+    url: "https://github.com/opena2a-org/hackmyagent"
+    capabilities:
+      - "Security scanner and red-team toolkit for AI agent environments"
+      - "Supports Claude Code, Cursor, VS Code, and any MCP server setup"
+      - "Identifies vulnerabilities before attackers do"
+      - "CLI usage: npx hackmyagent"
+    limitations:
+      - "Community/open-source — database coverage and update cadence unclear"
+      - "Red-team focus — not a replace for dedicated skill/marketplace scanners"
+    notes: "Available 2026-03-23; npx hackmyagent"
+
+  - name: "ClawNet"
+    vendor: "Silverfort (open-source)"
+    type: "openclaw-plugin"
+    url: "https://www.silverfort.com/blog/clawhub-vulnerability-enables-attackers-to-manipulate-rankings-to-become-the-number-one-skill/"
+    capabilities:
+      - "Open-source security plugin for OpenClaw/ClawHub skill installations"
+      - "Intercepts skill installations before execution"
+      - "Uses the agent's LLM to scan skill content for malicious patterns"
+      - "Pre-install analysis of SKILL.md instructions and embedded commands"
+    limitations:
+      - "OpenClaw specific — not usable outside ClawHub ecosystem"
+      - "LLM-based detection — may miss highly obfuscated payloads"
+    notes: "Released 2026-03-24 alongside Silverfort ClawHub ranking disclosure; complements mcp-scan for ClawHub installs"
+
+  - name: "ESET AI Skills Checker"
+    vendor: "ESET"
+    type: "cloud-saas"
+    url: "https://www.eset.com/us/home/ai-skills-checker/"
+    capabilities:
+      - "Scans AI skills for malicious activity and risky behavior before installation"
+      - "Multilayered behavioral analysis"
+      - "Real-time threat detection"
+    limitations:
+      - "Commercial/SaaS product"
+      - "Scope and coverage of skill ecosystems not fully documented publicly"
+    notes: "Available as of 2026-03-23"
+
 # ═══════════════════════════════════════════════════════════════
 # DEFENSIVE FRAMEWORKS & BLOCKLISTS
 # ═══════════════════════════════════════════════════════════════
@@ -2036,3 +2156,13 @@ defensive_resources:
     url: "https://blog.qualys.com/product-tech/2026/03/10/from-shadow-models-to-audit-ready-ai-security-a-practical-path-with-qualys-totalai"
     type: "platform"
     description: "Qualys TotalAI treats MCP servers as first-class security assets alongside models and endpoints. Supports inventory-first visibility across AI environments — discovers MCP server instances, tracks versions, and detects unmanaged/shadow MCP deployments. Available 2026-03-10."
+
+  - name: "TrueFoundry MCP Gateway"
+    url: "https://www.truefoundry.com/blog/best-ai-code-security"
+    type: "platform"
+    description: "Real-time tool access control layer for MCP servers. Allowlists approved servers, inspects every tool invocation, and blocks unauthorized connections before completion. Provides zero visibility gap coverage — most organizations previously had no visibility into which MCP servers their agents connect to. Addresses T017 (Shadow MCP Deployment) and excessive agency risks. Available 2026-03-27."
+
+  - name: "Cisco DefenseClaw Framework"
+    url: "https://newsroom.cisco.com/content/r/newsroom/en/us/a/y2026/m03/cisco-reimagines-security-for-the-agentic-workforce.html"
+    type: "framework"
+    description: "Open-source secure agent framework by Cisco (available 2026-03-27). Bundles Skills Scanner, MCP Scanner, a2a-scanner, CodeGuard, and AI BoM into a unified security pipeline with pre-deployment scanning, runtime threat detection, and automated enforcement (quarantine within 2 seconds). Integrates with NVIDIA OpenShell. See also scanning_tools section for technical details."
