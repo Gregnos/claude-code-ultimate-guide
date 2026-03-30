@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Documentation
 
+- **CC releases v2.1.83–v2.1.87**: Integrated 9 guide updates from the weekly watch covering hooks, enterprise settings, MCP, and Windows
+  - **Hooks events table**: Added `CwdChanged`, `FileChanged`, and `TaskCreated` hook events (§7.1)
+  - **Conditional hooks `if` field**: New section explaining `if` filter syntax for reducing subprocess overhead (§7.2, v2.1.85+)
+  - **PreToolUse headless AskUserQuestion**: Added pattern for satisfying interactive prompts from CI/CD pipelines via `updatedInput` (§7.2, v2.1.85+)
+  - **`managed-settings.d/` drop-in directory**: New enterprise governance section documenting per-team policy fragments (§16, v2.1.83+)
+  - **`sandbox.failIfUnavailable`**: Added with compliance recommendation to prevent silent unsandboxed fallback (§16, v2.1.83+)
+  - **`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`**: Added env var for stripping cloud credentials from subprocesses (§16, v2.1.83+)
+  - **PowerShell native tool (Windows)**: New section documenting opt-in preview tool for Windows-native `.ps1` execution (§7.3, v2.1.84+)
+  - **`X-Claude-Code-Session-Id` header**: Added proxy/observability section with nginx and Envoy examples (§19, v2.1.86+)
+  - **MCP `headersHelper` env vars**: Added multi-server authentication pattern using `CLAUDE_CODE_MCP_SERVER_NAME`/`URL` (§8.3, v2.1.85+)
+  - **`TaskOutput` deprecation**: Added deprecation notice in Tasks API section and updated 3 plan command templates to use `Read` instead (v2.1.83+)
+- **`/loop` command**: Added dedicated section (§6.1) documenting recurring interval automation — syntax, use cases from Boris Cherny, stopping mechanism; added in v2.1.71
+- **Session forking**: Added dedicated section (§6.1) for `/branch` and `--fork-session` — when to fork vs restart, workflow with `/rename`, v2.1.77 history
+- **Claude in Chrome**: Added subsection in §9.5 (Tight Feedback Loops) documenting the Chrome browser extension — setup, capabilities table, `--chrome`/`--no-chrome` flags, why visual feedback matters
 - **auto-compact + memory capture conflict**: Added note in Session vs. Persistent Memory section explaining that `autoCompactEnabled: false` is required for PostToolUse-based capture tools (claude-mem etc.) to avoid losing history mid-session; includes two mitigation options
 - **claude-mem**: Updated all coverage to v10.6.3 (up from v9.1.1)
   - `guide/ultimate-guide.md` Section 8.2: expanded architecture diagram with full session lifecycle table, observation type taxonomy (DISCOVERY/CHANGE/FEATURE/BUGFIX), skills table (mem-search/smart-explore/make-plan/do/timeline-report)

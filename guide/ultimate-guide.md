@@ -4131,6 +4131,7 @@ Claude Code provides two task management approaches:
 - `TaskUpdate` - Modify task status, metadata, and dependencies
 - `TaskGet` - Retrieve individual task details
 - `TaskList` - List all tasks in current task list
+- ~~`TaskOutput`~~ — **Deprecated (v2.1.83+)**. Use `Read` on `.claude/tasks/<id>/output.log` to access task output directly.
 
 **Core capabilities:**
 - **Persistent storage**: Tasks saved to `~/.claude/tasks/<task-list-id>/`
@@ -8517,6 +8518,31 @@ Slash commands are shortcuts for common workflows.
 
 > Note: This feature (`btw-side-question`) was introduced around v2.0.73 and matured by v2.1.23. If you encounter issues, verify you're on a recent version.
 
+### Session Forking
+
+Session forking creates a new independent session that starts from an existing point in history. Use it when you hit a decision point and want to explore two directions without restarting from scratch.
+
+**Two ways to fork:**
+
+```bash
+# From inside an active session
+/branch
+
+# From the CLI when resuming
+claude --resume <session-id> --fork-session
+```
+
+`/branch` was added in v2.1.77, replacing `/fork` (still works as an alias).
+
+**When to fork instead of restart:**
+- You're at a working state and want to explore a risky refactor without losing it
+- You want to try two different approaches to the same problem in parallel
+- You found a good mid-session checkpoint and want to branch off for a hypothesis test
+
+**After forking**: both branches are independent — changes in one don't affect the other. Resume either later with `claude --resume` and the interactive session picker.
+
+**Tip**: run `/rename` before forking so you can tell the two branches apart in the picker.
+
 ### The /insights Command
 
 `/insights` analyzes your Claude Code usage history to generate a comprehensive report identifying patterns, friction points, and optimization opportunities.
@@ -8825,6 +8851,30 @@ Added in v2.1.63, `/batch` orchestrates large-scale codebase changes by distribu
 `/batch` is the native equivalent of the parallel worktrees multi-agent pattern (see §15). Use it for large, repetitive, file-level changes that can be split into independent units: migrations, refactors, bulk type annotations, dependency replacements.
 
 > **Note**: Both `/simplify` and `/batch` are bundled slash commands that ship with Claude Code v2.1.63+. No configuration required.
+
+### The /loop Command
+
+`/loop [interval] [prompt]` runs a prompt or slash command on a recurring interval — until you stop it. Turn any repetitive check or workflow into an automated background task.
+
+```bash
+/loop 5m check the deploy
+/loop 30m /slack-feedback
+/loop 1h /pr-pruner
+```
+
+**How it works**: Claude executes the prompt, waits for the interval, executes again, repeat. Each execution is timestamped in the transcript. You can reference a slash command (like `/loop 30m /review-pr`) or write a free-form prompt directly.
+
+**Use cases from Boris Cherny (Claude Code creator):**
+
+| Loop | What it does |
+|------|-------------|
+| `/loop 5m /babysit` | Auto-handle code review, rebase, push PRs forward |
+| `/loop 30m /slack-feedback` | Post PRs for team feedback every 30 min |
+| `/loop 1h /pr-pruner` | Clean up stale PRs on a schedule |
+
+**Stopping a loop**: Press `Ctrl+C` or send any new message.
+
+> Added in v2.1.71. Timestamp markers in loop transcripts added in v2.1.86.
 
 ### Custom Commands
 
@@ -9172,6 +9222,9 @@ Hooks are scripts that run automatically when specific events occur.
 | `ConfigChange` | Config file changes during session | Yes (except policy) | Enterprise audit, block unauthorized changes |
 | `WorktreeCreate` | Worktree being created | Yes (non-zero exit) | Custom VCS setup |
 | `WorktreeRemove` | Worktree being removed | No | Clean up VCS state |
+| `CwdChanged` | Working directory changes during session | No | direnv reload, toolchain switching |
+| `FileChanged` | A file is modified during session | No | Reload config, trigger watchers |
+| `TaskCreated` | Task created via TaskCreate | No | Task monitoring, audit logging |
 | `PreCompact` | Before context compaction | No | Save state before compaction |
 | `SessionEnd` | Session terminates | No | Cleanup, logging |
 
@@ -9352,6 +9405,7 @@ gh pr create --title "..." --body "..."
 | Field | Description |
 |-------|-------------|
 | `matcher` | Regex pattern filtering when hooks fire (tool name, session start reason, etc.) |
+| `if` | Permission-rule filter controlling when the hook fires (e.g. `Bash(git *)`) — v2.1.85+ |
 | `type` | Hook type: `"command"`, `"http"`, `"prompt"`, or `"agent"` |
 | `command` | Shell command to run (for `command` type) |
 | `prompt` | Prompt text for LLM evaluation (for `prompt`/`agent` types). Use `$ARGUMENTS` as placeholder for hook input JSON |
@@ -9390,6 +9444,36 @@ gh pr create --title "..." --body "..."
 ```
 
 HTTP hooks receive the same JSON payload as `command` hooks and must return valid JSON. The `allowedEnvVars` field lists environment variables that can be referenced in headers (e.g., for Bearer token authentication).
+
+### Conditional Hooks with `if` (v2.1.85+)
+
+The `if` field filters when a hook fires using the same permission-rule syntax as `allowedTools`. This avoids spawning subprocesses on every event and eliminates the need for shell-side `case` statements.
+
+```json
+// Before: hook fires on every PostToolUse — guard logic inside the script
+{
+  "event": "PostToolUse",
+  "command": "./scripts/log-tool-usage.sh"
+}
+
+// After: hook fires only when Bash executes a git command
+{
+  "event": "PostToolUse",
+  "if": "Bash(git *)",
+  "command": "./scripts/log-git-usage.sh"
+}
+```
+
+Supported `if` patterns follow the same syntax as tool permission rules:
+
+| Pattern | Fires when |
+|---------|-----------|
+| `Bash(git *)` | Any Bash call starting with `git` |
+| `Edit` | Any Edit tool call |
+| `Write(/tmp/*)` | Write to paths under `/tmp/` |
+| `Bash(npm * \| yarn *)` | npm or yarn commands |
+
+> **Performance**: Every hook spawn is a subprocess. Conditional `if` filtering reduces overhead in large repos where PostToolUse fires hundreds of times per session.
 
 ### Hook Input (stdin JSON)
 
@@ -9453,6 +9537,22 @@ Hooks communicate results through exit codes and optional JSON on stdout. Choose
   }
 }
 ```
+
+**PreToolUse satisfying AskUserQuestion (v2.1.85+ — headless integrations)**:
+
+When Claude fires `AskUserQuestion` mid-session, interactive prompts are not available in headless environments (CI pipelines, web frontends, orchestrators). A `PreToolUse` hook can intercept the question, collect the answer via an external UI, and return it before the tool executes:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "updatedInput": { "answer": "yes, proceed with migration" },
+    "permissionDecision": "allow"
+  }
+}
+```
+
+The hook script is responsible for retrieving the answer (e.g., polling a webhook or reading from a queue). Return `updatedInput` with the answer and `permissionDecision: "allow"` to satisfy the question and continue execution without interactive prompts.
 
 ### Exit Codes
 
@@ -9606,6 +9706,26 @@ afplay "$SOUND" 2>/dev/null &
 
 exit 0
 ```
+
+### PowerShell Native Tool (Windows, v2.1.84+ opt-in preview)
+
+On Windows, Claude Code can use PowerShell as a first-class tool alongside Bash — allowing `.ps1` scripts, PowerShell modules, and Windows-native commands without requiring WSL or Git Bash.
+
+Enable it in `~/.claude/settings.json`:
+
+```json
+{
+  "tools": {
+    "powershell": {
+      "enabled": true
+    }
+  }
+}
+```
+
+Once enabled, Claude can execute PowerShell commands directly (e.g., `Get-ChildItem`, `Invoke-WebRequest`, `dotnet` CLI). Useful for teams working in Windows-first environments where `.ps1` scripts are the standard automation layer.
+
+> **Preview**: This is an opt-in preview as of v2.1.84. The Bash tool remains available on Windows via Git Bash or WSL and is still preferred for cross-platform scripts.
 
 ### Windows Hook Templates
 
@@ -12586,6 +12706,45 @@ npm install @microsoft/playwright-mcp
 | `env` | Environment variables |
 | `cwd` | Working directory |
 
+### Dynamic Headers for Multiple MCP Servers (v2.1.85+)
+
+When a single `headersHelper` script serves multiple MCP servers, you can branch on `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` to return different authentication tokens or scopes per server:
+
+```bash
+#!/bin/bash
+# .claude/mcp-headers.sh
+case "$CLAUDE_CODE_MCP_SERVER_NAME" in
+  "github")
+    echo "{\"Authorization\": \"Bearer $GITHUB_TOKEN\"}"
+    ;;
+  "linear")
+    echo "{\"Authorization\": \"Bearer $LINEAR_API_KEY\"}"
+    ;;
+  *)
+    echo "{}"
+    ;;
+esac
+```
+
+Reference the script in your MCP server config:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "headersHelper": ".claude/mcp-headers.sh"
+    },
+    "linear": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-linear"],
+      "headersHelper": ".claude/mcp-headers.sh"
+    }
+  }
+}
+```
+
 ### Variable Substitution
 
 | Variable | Expands To |
@@ -15291,6 +15450,38 @@ claude
 
 💡 **Key insight**: Background tasks optimize fullstack workflows by decoupling infrastructure (servers, watchers) from iterative development. Use them strategically to maintain tight feedback loops across the entire stack.
 
+### Claude in Chrome: The Visual Feedback Loop
+
+All the loops above validate code. None of them tell Claude whether the UI actually looks correct, whether a form works, or whether the page renders without errors. Without a browser connection, Claude can only infer — it writes code and assumes the result matches intent.
+
+Claude in Chrome closes that gap. It's a Chrome browser extension that gives Claude Code direct control over your browser: navigate to URLs, click elements, read the console, fill forms, take screenshots, and observe the rendered result of what it just built.
+
+**Setup:**
+1. Install the Claude in Chrome extension from the Chrome Web Store
+2. Enable it for your session:
+
+```bash
+claude --chrome          # start with Chrome integration enabled
+claude --no-chrome       # disable for this session
+/chrome                  # check connection status / manage permissions
+```
+
+**What Claude can do with Chrome access:**
+
+| Capability | Practical use |
+|-----------|--------------|
+| Navigate to localhost | Verify the page renders after a change |
+| Read console errors | No copy-paste; Claude sees errors directly |
+| Click through flows | Test that a form submission actually works |
+| Screenshot + compare | Check visual output against expectations |
+| Fill inputs | Test validation, edge cases, empty states |
+
+**The key insight from Boris Cherny (Claude Code creator)**: "If Claude can't see the result, it can't improve it." Code feedback loops catch syntax and logic errors. Browser feedback loops catch the rest — layout, interactions, runtime errors.
+
+**When `/chrome` is hidden**: Claude Code hides the `/chrome` command when no Chrome integration is available for your current auth setup (v2.1.87+). Verify the extension is installed and Chrome is running if it doesn't appear.
+
+> Introduced in v2.0.72 as "Claude in Chrome Beta". The `--chrome`/`--no-chrome` flags and `/chrome` command control the browser integration. This is separate from the `claude-in-chrome` MCP server, which is a different browser automation mechanism.
+
 ## 9.6 Todo as Instruction Mirrors
 
 **Reading time**: 5 minutes
@@ -16822,6 +17013,47 @@ exit 0
 ```
 
 > **Enterprise note**: `disableAllHooks` (v2.1.49+) can no longer bypass *managed* hooks — hooks set via organizational policy always run regardless of this setting. Only non-managed hooks are affected.
+
+#### Policy fragment deployment with `managed-settings.d/` (v2.1.83+)
+
+In multi-team organizations, editing a single `managed-settings.json` creates merge conflicts and coordination overhead. The `managed-settings.d/` drop-in directory solves this: each file is an independent policy fragment that Claude Code merges alphabetically at startup.
+
+```
+/etc/claude-code/managed-settings.d/
+├── 00-security-baseline.json     # From security team
+├── 10-allowed-tools.json         # From platform team
+└── 50-team-hooks.json            # From individual team
+```
+
+Each fragment follows the same schema as `managed-settings.json`. Conflicts are resolved by merge order (alphabetical). This lets security provide a global baseline without blocking teams from deploying their own fragments independently.
+
+#### Sandbox fail-safe: `sandbox.failIfUnavailable` (v2.1.83+)
+
+By default, if Claude Code cannot start the sandbox (macOS Seatbelt / Linux seccomp unavailable), it silently falls back to running unsandboxed. In security-sensitive environments this silent fallback is a compliance risk.
+
+Set `sandbox.failIfUnavailable: true` in `managed-settings.json` to fail hard instead:
+
+```json
+{
+  "sandbox": {
+    "failIfUnavailable": true
+  }
+}
+```
+
+**Recommended for**: regulated environments (SOC 2, HIPAA), CI runners where sandbox availability is guaranteed, any context where an unsandboxed fallback is not acceptable.
+
+#### Subprocess credential isolation: `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` (v2.1.83+)
+
+By default, subprocesses spawned by Claude Code (Bash tool, hooks, MCP stdio) inherit the full shell environment, including Anthropic API keys and cloud provider credentials. Set `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` to strip those credentials before subprocess execution:
+
+```bash
+export CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1
+```
+
+This scrubs `ANTHROPIC_API_KEY`, `AWS_*`, `GOOGLE_*`, `AZURE_*`, and similar cloud provider variables from the subprocess environment. Claude Code's own API calls are unaffected — only the child processes are restricted.
+
+**When to enable**: any hook or MCP script that makes outbound network calls and should not have access to your API credentials.
 
 ### Database Branch Isolation with Worktrees
 
@@ -18890,6 +19122,34 @@ Track multi-instance workflows with metrics to validate ROI.
 ```
 
 **See also**: [Session Observability Guide](./ops/observability.md)
+
+#### Proxy-level session tracking with `X-Claude-Code-Session-Id` (v2.1.86+)
+
+Every API request Claude Code makes now includes an `X-Claude-Code-Session-Id` header. Reverse proxies and API gateways can use it to aggregate costs, latency, and quota usage by session without inspecting the request body.
+
+**nginx example:**
+```nginx
+map $http_x_claude_code_session_id $session_id {
+  default $http_x_claude_code_session_id;
+}
+log_format claude '$remote_addr - $session_id - $request_time - $status';
+access_log /var/log/nginx/claude.log claude;
+```
+
+**Envoy / structured logging example:**
+```yaml
+access_log:
+  - name: envoy.access_loggers.file
+    typed_config:
+      "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
+      path: "/var/log/envoy/claude.json"
+      json_format:
+        session_id: "%REQ(X-Claude-Code-Session-Id)%"
+        duration_ms: "%DURATION%"
+        status: "%RESPONSE_CODE%"
+```
+
+This lets you build per-session dashboards, enforce session-level rate limits, or attribute API costs to individual developers or CI jobs — all without modifying Claude Code's configuration.
 
 #### Warning Signs (Rollback Triggers)
 
