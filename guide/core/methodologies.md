@@ -41,6 +41,39 @@ This is a quick reference for 15 structured development methodologies that have 
 
 ---
 
+## Methodology Map
+
+Where each methodology sits on two axes: **Spec-First vs Code-First** (Y) and **Lean/Solo vs Enterprise/Governed** (X).
+
+```
+                      SPEC / PLANNING FIRST
+                                ▲
+  ── lean · spec ──             │             ── governed · spec ──
+                                │
+  [Doc-Driven]  [SDD]           │    [BDD]  [ATDD]   [Req-Driven]
+  [GSD]  [Plan-First]           │ [CDD] [ADR-Driven]  [DDD]  [BMAD]
+                                │
+  LEAN ─────────────────────────┼────────────────────────────────► ENTERPRISE
+                                │
+  ── lean · code ──             │             ── governed · code ──
+                                │
+  [Context Eng.]   [TDD]        │       [Multi-Agent]
+  [Prompt Eng.]  [Iterative]    │       [Eval-Driven]       [FDD]
+  [Ralph Loop]                  │           [JiTTesting]
+                                │
+                         CODE / EMERGENT
+```
+
+**How to read it:**
+
+- **Top-left** — Spec-first lean: `SDD`, `Doc-Driven`, `Plan-First`. Natural entry point for solo devs and small teams moving away from "code first".
+- **Top-right** — Spec-first governed: `BMAD`, `Req-Driven`, `ATDD`, `DDD`. Real governance, but costly to set up. ROI starts at 5-10 devs.
+- **Bottom-left** — Code-first lean: the natural Claude Code terrain. `TDD` + `Ralph Loop` + `Iterative` = core solo workflow.
+- **Bottom-right** — Code-first at scale: `Multi-Agent`, `Eval-Driven`, `JiTTesting` (Meta, 100M+ LoC). Emerging patterns for high-volume teams.
+- **On the axis** — `Plan-First`, `CDD`, `ADR-Driven`, `GSD`: hybrid approaches that adapt to any context.
+
+---
+
 ## The 15 Methodologies
 
 Organized in a 6-tier pyramid from strategic orchestration down to optimization techniques.

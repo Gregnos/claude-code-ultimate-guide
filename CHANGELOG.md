@@ -8,9 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **Methodology Map**: Added 2D positioning diagram to `guide/core/methodologies.md` (between Decision Tree and The 15 Methodologies sections). Maps all 20 methodologies on Spec-First/Code-First (Y) vs Lean/Enterprise (X) axes, with quadrant labels and reading guide. Synced to landing guide reader.
+
 - **WP09 update (v3.27.6 → v3.38.1)**: Updated both FR (`09-apprendre-avec-ia.qmd`) and EN (`09-learning-with-ai.qmd`) whitepapers to integrate v3.37.0–v3.38.1 changes: (1) Agent Adoption Curve — 7-level maturity scale from Nicolas Martignole/Back Market, inserted as new "Où en Êtes-Vous?" section after the Three Patterns diagnosis; (2) "Job is now the spec" reframing (Larridin/Kanitkar) — developer as producer/director, mastery = spec-writing quality, added in Augmented Pattern section; (3) JiT Tests as comprehension exercise — Meta production results (4x hardening tests, 70% review load reduction), brief mention in Augmented Pattern advanced techniques. Added 2 new source entries in Practitioners table.
 
 - **WP01 update (v3.27.6 → v3.38.1)**: Updated both FR (`01-prompts-efficaces.qmd`) and EN (`01-effective-prompts.qmd`) whitepapers to integrate v3.37.0–v3.38.1 changes: new slash commands (`/investigate`, `/qa`, `/canary`, `/land-and-deploy`, `/review-pr` enhanced, `/session-save`), `/loop` and `/branch` workflow tools, `effort` frontmatter field for skills/commands, and `showThinkingSummaries: false` default note in Thinking Modes section. Added "New Workflows v3.37+" section in both files.
+
+- **WP02 update (v3.27.6 → v3.38.1)**: Updated both FR (`02-personnalisation.qmd`) and EN (`02-customization.qmd`): Agent Memory 3-scope table (user/project/local), `effort` field in Skills frontmatter, `${CLAUDE_PLUGIN_DATA}` persistent storage section, `managed-settings.d/` enterprise governance section.
+
+- **WP03 update (v3.27.6 → v3.38.1)**: Updated both FR (`03-securite.qmd`) and EN (`03-security.qmd`): v2.1.78 security fixes (silent sandbox disable, MCP deny bypass, protected dirs writable in bypassPermissions), Hook Profiles env-based gating (minimal/standard/strict), conditional `if` field for hooks, PermissionDenied hook event, heartbeat dead-man switch with timeout table, threat intelligence update (T021 IDEsaster, GhostClaw, CVE-2026-33010, CVE-2026-27825/27826, Cisco DefenseClaw, Ferrok).
+
+- **WP04 update (v3.27.6 → v3.38.1)**: Updated both FR and EN `04-architecture.qmd`: auto-compact precise mechanism (6-7% buffer + micro-compaction), streaming tool execution (10 parallel), Advanced Tool Use Patterns table (PTC/Dynamic Filtering/Tool Use Examples), Agent Memory 3 scopes, knowledge cutoffs table (Sonnet 4.6/Opus 4.6/Haiku 4.5).
+
+- **WP05 update (v3.27.6 → v3.38.1)**: Updated both FR (`05-equipe.qmd`) and EN (`05-team.qmd`): `--bare` flag (headless CI mode), `--channels` permission relay, Hook Profiles, AGENTS.md Compound Learning (Gloaguen et al. 2026 empirical data), Instinct-Based Continuous Learning, Dedicated Reviewer Teammate (1:4 ratio, Addy Osmani), Loop Guardrails (MAX_ITERATIONS=8).
+
+- **WP06 update (v3.27.6 → v3.38.1)**: Updated both FR and EN `06-privacy.qmd`: `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` env var, `sandbox.failIfUnavailable` setting, `X-Claude-Code-Session-Id` header with nginx passthrough example.
+
+- **WP07 update (v3.27.6 → v3.38.1)**: Updated both FR (`07-guide-reference.qmd`) and EN (`07-reference-guide.qmd`): Agent Memory 3-scope table, `effort` field, 4 new hook events (CwdChanged/FileChanged/TaskCreated/PermissionDenied), conditional `if` hook filter, TaskOutput deprecation (v2.1.83+), 7 new slash commands, 4 new CLI flags (--bare/--channels/--console/--fork-session), knowledge cutoffs table, `managed-settings.d/` and `${CLAUDE_PLUGIN_DATA}` callout, Settings Reference pointer.
+
+- **WP08 update (v3.27.6 → v3.38.1)**: Updated both FR and EN `08-agent-teams.qmd`: Iterative Retrieval for Sub-Agents (WHY/WHAT pattern, 3-cycle max), AGENTS.md Compound Learning (human-curated +4% vs LLM-generated -3%/+20% cost), Loop Guardrails, Dedicated Reviewer Teammate, token budgeting per agent, loop-monitor template, Ralph Loop disambiguation.
+
+- **Recap cards content update (v3.37.0 → v3.38.1)**: Targeted content additions to 5 priority cards (FR + EN): m16 (Guardrails section — MAX_ITERATIONS, Dedicated Reviewer 1:4, token budget 85% pause), m17 (Iterative Retrieval — WHY/WHAT pattern, 3-cycle max), c04 (`effort` field in Skills, `${CLAUDE_PLUGIN_DATA}` for Plugins), t15 (`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`), t16 (`sandbox.failIfUnavailable`).
 
 - **`/audit-whitepapers` command**: New diagnostic command that audits all whitepapers (FR + EN) and recap cards (FR + EN) for version freshness, FR/EN parity, and metadata quality. Scores each document out of 100 across 4 phases (version gap 40pts, content staleness 20pts, parity 20pts, metadata 20pts) with A-F grading. Supports `--fix` (frontmatter patch suggestions), `--verbose` (all criteria), `--wp-only`, `--cards-only`. Feeds into `/update-whitepapers` for systematic updates.
 
