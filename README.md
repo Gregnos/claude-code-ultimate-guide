@@ -11,6 +11,8 @@
   <a href="./examples/"><img src="https://img.shields.io/badge/Templates-228-green?style=for-the-badge" alt="Templates"/></a>
   <a href="./guide/security/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-15_vulnerabilities_·_655_malicious_skills-red?style=for-the-badge" alt="Threat Database"/></a>
   <a href="./mcp-server/"><img src="https://img.shields.io/badge/MCP_Server-npx_ready-blueviolet?style=for-the-badge" alt="MCP Server"/></a>
+  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.pdf"><img src="https://img.shields.io/badge/📄_Download-PDF-dc2626?style=for-the-badge" alt="Download PDF"/></a>
+  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.epub"><img src="https://img.shields.io/badge/📚_Download-EPUB-7c3aed?style=for-the-badge" alt="Download EPUB"/></a>
 </p>
 
 <p align="center">
