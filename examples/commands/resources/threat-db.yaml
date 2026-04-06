@@ -2,8 +2,8 @@
 # For use with /security-check and /security-audit commands
 # Manually maintained — update after new security advisories
 
-version: "2.11.0"
-updated: "2026-03-30"
+version: "2.12.0"
+updated: "2026-04-06"
 sources:
   - name: "Snyk ToxicSkills"
     url: "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
@@ -233,6 +233,30 @@ sources:
   - name: "The Hacker News - IDEsaster: 30+ Flaws in AI Coding Tools"
     url: "https://radar.offseq.com/threat/researchers-uncover-30-flaws-in-ai-coding-tools-en-5c971663"
     date: "2026-03-29"
+  - name: "ZDI-26-246 - CVE-2026-5058 aws-mcp-server 0-day Command Injection"
+    url: "https://www.zerodayinitiative.com/advisories/ZDI-26-246/"
+    date: "2026-03-30"
+  - name: "SentinelOne - CVE-2026-31951 LibreChat OAuth Token Exfiltration"
+    url: "https://www.sentinelone.com/vulnerability-database/cve-2026-31951/"
+    date: "2026-04-03"
+  - name: "NVD - CVE-2026-34742 Go MCP SDK DNS Rebinding"
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-34742"
+    date: "2026-04-02"
+  - name: "Tenable - CVE-2026-5323 a11y-mcp SSRF"
+    url: "https://www.tenable.com/cve/CVE-2026-5323"
+    date: "2026-04-02"
+  - name: "ThreatDown - Weaponizing Autonomy: The Rise of Malicious AI Agent Skills"
+    url: "https://www.threatdown.com/blog/weaponizing-autonomy-the-rise-of-malicious-ai-agent-skills/"
+    date: "2026-04-04"
+  - name: "Straiker.ai - NomShub: Cursor Remote Tunnel Exploitation via Indirect Prompt Injection"
+    url: "https://www.straiker.ai/blog/nomshub-cursor-remote-tunneling-sandbox-breakout"
+    date: "2026-04-03"
+  - name: "arXiv 2604.03070 - Credential Leakage in LLM Agent Skills: Large-Scale Empirical Study"
+    url: "https://arxiv.org/html/2604.03070v1"
+    date: "2026-04-03"
+  - name: "Permiso - SandyClaw: First Dynamic Sandbox for AI Agent Skills"
+    url: "https://permiso.io/blog/introducing-sandyclaw-dynamic-sandbox-ai-agent-skills"
+    date: "2026-04-03"
 
 # ═══════════════════════════════════════════════════════════════
 # MALICIOUS AUTHORS (confirmed by security researchers)
@@ -1156,6 +1180,49 @@ cve_database:
     mitigation: "Update Framelink Figma MCP Server to latest version; sanitize all user-supplied inputs; restrict MCP Server network access to trusted sources"
     notes: "Distinct CVE from CVE-2025-53967 (same component/method, different CVE assignment; CVSS 9.8 vs 7.5); CWE-78"
 
+  # --- aws-mcp-server (0-day Command Injection) ---
+  - id: "CVE-2026-5058"
+    component: "aws-mcp-server"
+    severity: "critical"
+    cvss: 9.8
+    description: "Command injection via improper validation of the allowed commands list — remote attackers can execute arbitrary code without authentication by passing shell metacharacters in command arguments; vendor rejected initial report, published as 0-day advisory by ZDI"
+    source: "ZDI-26-246 (2026-03-30); vendor rejected initial report"
+    fixed_in: "no vendor patch — treat as unpatched 0-day; avoid using aws-mcp-server in network-accessible environments"
+    mitigation: "Do not expose aws-mcp-server to untrusted network access; use allowlists enforced at OS level; consider alternative AWS MCP implementations with active security support; monitor ZDI advisory for future vendor patch"
+    cwe: "CWE-77"
+    notes: "0-day advisory; vendor declined to patch; CVSS 9.8 unauthenticated RCE"
+
+  # --- LibreChat (OAuth token exfiltration) ---
+  - id: "CVE-2026-31951"
+    component: "LibreChat (versions 0.8.2-rc1 through 0.8.3-rc1)"
+    severity: "high"
+    description: "Information disclosure via malicious MCP server — insufficient access control in MCP server header processing allows credential placeholders to resolve to victim user OAuth tokens rather than the server creator's credentials; malicious MCP server can exfiltrate OAuth tokens through HTTP headers"
+    source: "SentinelOne (2026-04-03)"
+    fixed_in: "0.8.3-rc2 or later — check upstream"
+    mitigation: "Update LibreChat to >= 0.8.3-rc2; do not add MCP servers from untrusted sources in LibreChat; audit all configured MCP servers for unexpected HTTP header handling"
+    cwe: "CWE-284"
+
+  # --- Go MCP SDK (DNS Rebinding) ---
+  - id: "CVE-2026-34742"
+    component: "Go MCP SDK (HTTP-based MCP servers using StreamableHTTPHandler or SSEHandler)"
+    severity: "high"
+    description: "DNS rebinding vulnerability in Go MCP SDK prior to 1.4.0 — HTTP-based MCP servers on localhost without authentication lack DNS rebinding protection; malicious websites can bypass same-origin policy via DNS rebinding attack to invoke MCP tools or access resources on the local MCP server using developer credentials"
+    source: "NVD / Red Hat (2026-04-02)"
+    fixed_in: "1.4.0"
+    mitigation: "Update Go MCP SDK to >= 1.4.0; prefer stdio transport over HTTP for local MCP servers; implement Host header validation; add authentication to all HTTP-based MCP server endpoints; do not run HTTP MCP servers on localhost without auth"
+    cwe: "CWE-346"
+    notes: "Affects any Go MCP server using StreamableHTTPHandler or SSEHandler without authentication; related to T005 (DNS Rebinding on Local MCP)"
+
+  # --- a11y-mcp (SSRF) ---
+  - id: "CVE-2026-5323"
+    component: "a11y-mcp (accessibility MCP server, priyankark, up to 1.0.5)"
+    severity: "medium"
+    description: "Server-side request forgery in a11y-mcp versions up to 1.0.5 via A11yServer function in src/index.js — requires local initiation but allows requests to internal network resources through the accessibility scanning functionality"
+    source: "Tenable / NVD (2026-04-02)"
+    fixed_in: "1.0.6"
+    mitigation: "Update a11y-mcp to >= 1.0.6; restrict a11y-mcp network access to trusted targets; validate all URLs passed to A11yServer function"
+    cwe: "CWE-918"
+
 # ═══════════════════════════════════════════════════════════════
 # MINIMUM SAFE VERSIONS (quick reference for scanning)
 # ═══════════════════════════════════════════════════════════════
@@ -1180,6 +1247,8 @@ minimum_safe_versions:
   "mcp-memory-service": "10.25.1"
   "mcp-ruby-sdk": "0.9.2"
   "agentfront-enclave": "2.11.1"
+  "go-mcp-sdk": "1.4.0"
+  "a11y-mcp": "1.0.6"
 
 # ═══════════════════════════════════════════════════════════════
 # IOCs (Indicators of Compromise)
@@ -1806,6 +1875,16 @@ attack_techniques:
     cve_count: 24
     mitigation: "Disable auto-approve for file writes and tool calls in AI IDE settings; review IDE extension permissions; treat IDE workspace configuration files as security boundaries; do not auto-approve actions triggered by external repository content; keep AI IDE tools and extensions patched"
 
+  - id: "T022"
+    name: "NomShub: IDE Remote Tunnel Persistence via Indirect Prompt Injection"
+    description: "Attacker embeds malicious instructions in repository files (README, docs, code comments) that trigger automatically when an AI coding IDE opens the repo. The attack chains four steps: (1) indirect prompt injection hijacks AI context, (2) sandbox escape via shell builtin chaining breaks workspace confinement, (3) persistence installed via .zshenv overwrite survives reboots, (4) IDE built-in remote tunnel feature used as an undetected persistent backdoor for shell access."
+    examples:
+      - "NomShub: malicious README in Cursor repo triggers auto-execution on open; .zshenv overwritten; Cursor's remote tunnel established for persistent attacker shell access without user awareness"
+      - "Poisoned onboarding docs in developer repos that chain sandbox escape with legitimate IDE remote development features"
+    affected_platforms: ["Cursor AI"]
+    source: "Straiker.ai (2026-04-03)"
+    mitigation: "Disable auto-approve for file writes and shell commands in AI IDE settings; never open untrusted repos without reviewing markdown files first; audit .zshenv and shell init files after opening new repos; disable remote tunnel features unless actively required; treat IDE workspace as a security boundary"
+
 # ═══════════════════════════════════════════════════════════════
 # SCANNING TOOLS
 # ═══════════════════════════════════════════════════════════════
@@ -2140,10 +2219,43 @@ scanning_tools:
       - "Scans AI skills for malicious activity and risky behavior before installation"
       - "Multilayered behavioral analysis"
       - "Real-time threat detection"
+      - "Supports multiple repositories: ClawHub, playbooks.com, skills.sh, and others"
     limitations:
       - "Commercial/SaaS product"
       - "Scope and coverage of skill ecosystems not fully documented publicly"
     notes: "Available as of 2026-03-23"
+
+  - name: "SandyClaw"
+    vendor: "Permiso"
+    type: "cli + cloud"
+    url: "https://permiso.io/blog/introducing-sandyclaw-dynamic-sandbox-ai-agent-skills"
+    capabilities:
+      - "First dynamic sandbox for AI agent skills — detonates skills in a controlled environment"
+      - "Records every system call, network request, and file operation during runtime"
+      - "Detects malicious behavior that only manifests at runtime (bypasses static code analysis)"
+      - "Closes the gap that static scanners miss: payloads fetched from benign-looking URLs, runtime-only exploits"
+      - "Produces a full behavioral report with IOCs, suspicious patterns, and risk score"
+    limitations:
+      - "Newer tool — ecosystem coverage may be limited initially"
+      - "Dynamic analysis requires actual execution — review reports before deploying to production"
+    notes: "Launched 2026-04-03; addresses the fundamental limitation of mcp-scan and static scanners against runtime-only payloads; recommended complement to mcp-scan"
+
+  - name: "Semgrep MCP"
+    vendor: "Semgrep"
+    type: "mcp-server"
+    command: "semgrep mcp"
+    url: "https://semgrep.dev/docs/mcp"
+    capabilities:
+      - "MCP server integrating Semgrep security scanning directly into AI coding agent workflows"
+      - "Scans every file generated or modified by the agent using Semgrep Code (SAST)"
+      - "Supply chain scanning via Semgrep Supply Chain (SCA)"
+      - "Secrets detection via Semgrep Secrets"
+      - "Supports Claude Code, Cursor, and Windsurf as post-tool-use hook"
+      - "Single installation bundles scanning, hooks, and skills"
+    limitations:
+      - "Code scanning focus — does not scan SKILL.md content or ClawHub marketplace"
+      - "Requires Semgrep account for full rule set"
+    notes: "Available 2026-03-23; integrates as post-tool-cli-scan hook for continuous security validation during agent-driven development"
 
 # ═══════════════════════════════════════════════════════════════
 # DEFENSIVE FRAMEWORKS & BLOCKLISTS
@@ -2241,3 +2353,15 @@ defensive_resources:
     url: "https://newsroom.cisco.com/content/r/newsroom/en/us/a/y2026/m03/cisco-reimagines-security-for-the-agentic-workforce.html"
     type: "framework"
     description: "Open-source secure agent framework by Cisco (available 2026-03-27). Bundles Skills Scanner, MCP Scanner, a2a-scanner, CodeGuard, and AI BoM into a unified security pipeline with pre-deployment scanning, runtime threat detection, and automated enforcement (quarantine within 2 seconds). Integrates with NVIDIA OpenShell. See also scanning_tools section for technical details."
+
+  - name: "Credential Leakage in LLM Agent Skills — Empirical Study (arXiv 2604.03070)"
+    url: "https://arxiv.org/html/2604.03070v1"
+    type: "research"
+    description: "Large-scale empirical study (2026-04-03) identifying 1,708 previously unknown security issues across the agent skill ecosystem: 83 confirmed malicious skills designed for credential theft, 37.3% combining multiple attack patterns (defense evasion + remote exploitation), and extensive data exfiltration patterns targeting AWS credentials, crypto wallets, SSH keys, and browser sessions. Key finding: 26.1% of analyzed skills had at least one vulnerability; 13.3% contained data-exfiltration patterns; 11.8% had privilege-escalation patterns. Multi-pattern attacks combine Base64 obfuscation with reverse shells. Scanning gap documented: static analysis and LLM-based evaluation both miss runtime-only payloads."
+    stats:
+      new_issues_found: 1708
+      confirmed_malicious: 83
+      multi_pattern_pct: 37.3
+      skills_with_vuln_pct: 26.1
+      exfil_pattern_pct: 13.3
+      priv_esc_pattern_pct: 11.8

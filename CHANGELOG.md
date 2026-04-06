@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **Threat database update v2.12.0** (`examples/commands/resources/threat-db.yaml`): 4 new CVEs (CVE-2026-5058 aws-mcp-server 0-day CVSS 9.8, CVE-2026-31951 LibreChat OAuth exfiltration, CVE-2026-34742 Go MCP SDK DNS rebinding, CVE-2026-5323 a11y-mcp SSRF), 1 new attack technique (T022 NomShub IDE remote tunnel persistence via indirect prompt injection in Cursor), 2 new scanning tools (SandyClaw dynamic sandbox + Semgrep MCP integration), 1 new defensive resource (arXiv 2604.03070 empirical study: 1,708 issues found across agent skill ecosystem), 9 new sources, 2 new minimum safe version entries (go-mcp-sdk 1.4.0, a11y-mcp 1.0.6).
+
 - **`/token-audit` skill** (`examples/skills/token-audit/`, also installed in `~/.claude/skills/`): Runnable skill that executes the full token audit — measures fixed-context overhead per component, classifies rules files (ALWAYS/SOMETIMES/RARELY), audits hook stdout per invocation, and produces a prioritized action plan with savings estimates. Includes RAG break-even assessment.
 
 - **Token Audit Workflow** (`guide/core/context-engineering.md` §10): New section with step-by-step workflow to measure and reduce fixed context overhead — shell commands to inventory all loaded components, token budget calculator, signal/noise classification framework (ALWAYS/SOMETIMES/RARELY), hook overhead analysis, action plan template, and a reusable audit prompt. Includes honest RAG assessment (break-even analysis before committing to vector infrastructure).
