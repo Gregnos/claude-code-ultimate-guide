@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.38.13] - 2026-04-10
+
+### Documentation
+
+- **Claude Code Releases**: Updated tracking to v2.1.98
+  - Interactive Vertex AI setup wizard from login screen (GCP auth, project/region config, model pinning)
+  - Monitor tool for streaming events from background scripts; CLAUDE_CODE_PERFORCE_MODE for Perforce workflows
+  - Bash security hardening: 8+ permission bypass fixes (backslash flags, compound commands, env-var prefixes, /dev/tcp redirects)
+  - Subprocess PID namespace sandboxing on Linux; LSP clientInfo support; --exclude-dynamic-system-prompt-sections for cross-user caching
+
 ## [3.38.12] - 2026-04-09
 
 ### Documentation
