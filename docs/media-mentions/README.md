@@ -36,7 +36,7 @@ Tracks all external sources that mention the Claude Code Ultimate Guide (GitHub 
 
 | Platform | Count |
 |---|---|
-| Articles / blogs | 9 |
+| Articles / blogs | 10 |
 | Videos (YouTube) | 2 |
 | Podcasts | 1 |
 | Reddit | 3 |
@@ -46,7 +46,7 @@ Tracks all external sources that mention the Claude Code Ultimate Guide (GitHub 
 | Instagram | 1 |
 | Directories / registries | 7 |
 | Forums (HN) | 1 |
-| **Total** | **33** |
+| **Total** | **34** |
 
 ### Languages spotted
 

@@ -1,6 +1,6 @@
 meta:
   last_updated: "2026-04-14"
-  total_mentions: 33
+  total_mentions: 34
   notes: >
     Source of truth for all external mentions of the Claude Code Ultimate Guide
     (GitHub + cc.bruniaux.com). Add new entries as you discover them.
@@ -432,5 +432,19 @@ mentions:
     reach: medium
     status: active
     notes: "HN audience = high-quality signal. Thread title matches our cheatsheet page."
+    first_seen: "2026-04-14"
+
+  # ─── Articles (track-mentions 2026-04-14) ────────────────────────────────
+
+  - id: "034"
+    platform: article
+    url: "https://dev.to/agaches/ca-ressemble-a-quoi-mon-setup-claude-code--26le"
+    title: "ça ressemble à quoi, mon setup Claude Code ?"
+    author: "Arnaud Gaches (DEV Community)"
+    date: "2026-04-01"
+    angle: "Author shares their 6-month Claude Code setup and explicitly credits the guide twice: 'J'ai repris plein de bonnes idées de Florian Bruniaux stockées dans son claude code ultimate guide' + 3 hooks extracted directly from the repo."
+    reach: unknown
+    status: active
+    notes: "French article. Links both cc.bruniaux.com AND github.com/FlorianBruniaux/claude-code-ultimate-guide. Strong practitioner endorsement — hooks cited by name."
     first_seen: "2026-04-14"
 
