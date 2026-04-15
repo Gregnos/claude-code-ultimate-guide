@@ -9003,46 +9003,124 @@ Added in v2.1.63, `/batch` orchestrates large-scale codebase changes by distribu
 
 ### Scheduled Tasks: Three Methods
 
-Claude Code provides three distinct mechanisms for running recurring tasks. They differ on where the execution happens, whether a machine needs to be on, and how much infrastructure access you get.
+Claude Code provides three distinct mechanisms for running recurring tasks. They differ on where the execution happens, how the task is triggered, and whether a local machine needs to be on.
 
 #### Comparison Table
 
-| | Cloud Tasks (`/schedule`) | Desktop Tasks | `/loop` |
+| | Routines | Desktop Tasks | `/loop` |
 |--|--|--|--|
 | Runs on | Anthropic cloud | Local machine | Local machine |
 | Machine must be on | No | Yes | Yes |
 | Session must be open | No | No | Yes |
 | Persists between restarts | Yes | Yes | No |
 | Local file access | No (fresh repo clone) | Yes | Yes |
+| Trigger types | Schedule / API / GitHub events | Schedule only | In-session only |
 | MCP servers | Configured connectors per task | Config files + connectors | Inherited from session |
 | Permission prompts | None (autonomous) | Configurable | Inherited from session |
-| Minimum interval | 1 hour | 1 minute | 1 minute |
+| Minimum interval | 1 hour (schedule trigger) | 1 minute | 1 minute |
+| Daily run limit | 5–25/day (plan-based) | Unlimited | Session-scoped |
 
-#### Cloud Scheduled Tasks (`/schedule`)
+#### Routines (Cloud Automation)
 
-Cloud tasks run on Anthropic's infrastructure. Your machine can be completely off. Each run clones a fresh copy of your GitHub repository, so there is no access to local files outside of version control.
+Routines run on Anthropic's infrastructure — your machine can be completely off. Each run clones a fresh copy of your GitHub repository. Three trigger types can be combined on a single routine.
+
+> **Research preview**: behavior, limits, and API surface may change.
 
 **Access**: Pro, Max, Team, and Enterprise plans.
 
-**Create a task** via any of these three entry points:
-- `claude.ai/code/scheduled` — web interface
-- Desktop app — visual schedule builder
-- `/schedule` command in the CLI
+**Daily run limits**:
+
+| Plan | Runs/day |
+|------|----------|
+| Pro | 5 |
+| Max | 15 |
+| Team / Enterprise | 25 |
+
+Extra runs are available with billing enabled beyond the daily cap.
+
+**Create a routine** via:
+- `claude.ai/code/routines` — web interface
+- Desktop app — **New task** → **New remote task**
+- `/schedule` in the CLI (schedule trigger only; API and GitHub triggers require the web UI)
+
+**How each run works**: Anthropic clones your repo, spins up a Claude session with the configured environment and MCP connectors, executes the task, then pushes any commits to a branch prefixed `claude/` by default.
+
+**Key constraints**:
+- No local file access (only files tracked in the GitHub repo)
+- Minimum interval is 1 hour for the schedule trigger
+- Supports MCP connectors: Slack, Linear, Google Drive, and others configured per routine
+- Runs appear as full sessions you can inspect, continue, or PR from
+
+##### Schedule Trigger
+
+Runs on a recurring cron cadence. Four presets (hourly / daily / weekdays / weekly), plus custom expressions set via `/schedule update` in the CLI.
 
 ```bash
 /schedule "every Monday at 9am, open a PR summarizing last week's merged PRs"
-/schedule "every day at 6am, run the test suite and post results to Slack"
+/schedule "every night at 2am, pull the top bug from Linear and open a draft fix PR"
+/schedule "every Friday, scan merged PRs for docs drift and open update PRs"
 ```
 
-**How each run works**: Anthropic clones your repo, spins up a Claude session with the configured MCP connectors, executes the task, then pushes any commits to a branch prefixed `claude/` by default.
+##### API Trigger
 
-**Key constraints**:
-- Minimum interval is 1 hour (not suitable for sub-hour checks)
-- No local file access (files not in the GitHub repo are not visible)
-- Supports MCP connectors: Slack, Linear, Google Drive, and others configured per task
-- Can catch up on missed runs if the machine was offline
+Each routine gets a dedicated HTTP endpoint. POST to it from any external system — alerting tools, deploy pipelines, CI scripts — and Claude opens a new autonomous session.
 
-**Official docs**: `https://code.claude.com/docs/en/web-scheduled-tasks.md`
+```bash
+curl -X POST https://api.anthropic.com/v1/claude_code/routines/trig_01.../fire \
+  -H "Authorization: Bearer sk-ant-oat01-xxxxx" \
+  -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Sentry alert SEN-4521 fired in prod. Stack trace attached."}'
+```
+
+The optional `text` field passes run-specific context (alert body, deploy ID, log snippet) to the routine's prompt. The response returns a `session_url` to observe the run live.
+
+**Setup**: add an API trigger from the routine's edit page in the web UI, click **Generate token** (shown once — store it immediately), copy the endpoint URL. Tokens are per-routine and can be rotated or revoked from the same panel.
+
+**Use cases**: Datadog alert fires → Claude correlates trace with recent commits, opens draft fix PR; CD pipeline calls endpoint after deploy → smoke checks + go/no-go to Slack channel.
+
+##### GitHub Event Trigger
+
+Fires a new session automatically on matching GitHub repository events. Requires installing the Claude GitHub App on the target repo (separate from `/web-setup`).
+
+**17 supported event types**: pull request, push, issues, releases, check run, check suite, workflow run, workflow job, workflow dispatch, repository dispatch, pull request review, PR review comment, issue comment, discussion, discussion comment, commit comment, merge queue entry.
+
+**PR filters**: narrow by author, title, body, base/head branch, labels, draft state, merge state, or fork origin. All conditions must match.
+
+```
+# Example filter combinations
+PR opened from a fork                       → security review routine
+PR labeled "needs-backport", is merged      → backport-to-next routine
+Any merged PR changing /sdk/python/         → auto-port to Go SDK routine
+PR opened, is not draft                     → team review checklist routine
+```
+
+**Important**: each matching event opens its own independent session. Two PRs opened = two sessions. There is no session reuse across events.
+
+**Official docs**: `https://code.claude.com/docs/en/routines`
+
+##### Finding Use Cases for Your Project
+
+A good Routine candidate has three properties: it runs the same logic every time (or reacts to a well-defined event), the output is concrete (PR opened, message posted, file updated), and no human needs to be in the loop during execution.
+
+Five angles to audit any project:
+
+| Angle | Questions to ask |
+|-------|-----------------|
+| Scheduled maintenance | What do you do manually on a schedule and sometimes forget? Dependency audits, stale PR triage, coverage drift, dead code reports |
+| Event-driven reactions | What should happen on every PR open or merge but doesn't because nobody gets to it? Review checklists, changelog updates, cross-repo sync |
+| Alert response | When monitoring fires, what's the first thing a dev does? Could that step run automatically before the human looks? |
+| Cross-system sync | What drifts because the sync is manual? Two SDKs, a doc site and an API, GitHub issues and Linear |
+| Release automation | What do you run by hand before or after a deploy? Smoke tests, release notes, stakeholder notifications |
+
+Use the `/routines-discover` command to run this analysis against any codebase — it reads the repo, identifies concrete candidates across the five angles, and ranks them by value-to-effort ratio.
+
+```bash
+/routines-discover
+```
+
+Template: `examples/commands/routines-discover.md`
 
 #### Desktop Scheduled Tasks
 
