@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Documentation
 
+- **Context management**: Added "bad compact" antipattern callout and updated context rot threshold for 1M context window (Anthropic internal data: 300-400K tokens, task-dependent)
 - **Claude Code Releases**: Updated tracking to v2.1.110 (2026-04-16)
   - /tui command and tui setting — flicker-free fullscreen rendering in same conversation
   - Push notification tool — mobile push when Remote Control enabled

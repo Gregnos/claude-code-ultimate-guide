@@ -1821,6 +1821,8 @@ When context gets high:
 - Preserves key context
 - Reduces usage by ~50%
 
+> **When `/compact` goes wrong**: Compaction fires when the model has the most accumulated context, meaning it is also at its most distracted point. If the model cannot predict where the work is heading (e.g., auto-compact fires mid-debugging and your next message is "now fix that warning in bar.ts"), it may drop future-relevant info from the summary. Mitigate by compacting proactively and with context: `/compact focus on the auth refactor, drop the test debugging` guides the summary toward what matters next. (Source: Anthropic internal guidance)
+
 **Option 2: Clear** (`/clear`)
 - Starts fresh
 - Loses all context
@@ -1956,7 +1958,7 @@ Option 1 gives full control but requires discipline. Option 2 is safer if you fo
 
 Research shows LLM performance degrades significantly with accumulated context:
 - **20-30% performance gap** between focused and polluted prompts ([Chroma, 2025](https://research.trychroma.com/context-rot))
-- Degradation starts at ~16K tokens for Claude models
+- Degradation starts at ~16K tokens for older Claude models (Chroma, 2025); Anthropic reports noticeable degradation around 300-400K tokens on the 1M context window (task-dependent, not a fixed threshold)
 - Failed attempts, error traces, and iteration history dilute attention
 
 Instead of managing context within a session, you can **restart with a fresh session per task** while persisting state externally.
