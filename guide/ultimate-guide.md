@@ -16,7 +16,7 @@ tags: [guide, reference, workflows, agents, hooks, mcp, security]
 
 **Last updated**: January 2026
 
-**Version**: 3.38.12
+**Version**: 3.38.17
 
 ---
 
@@ -5443,7 +5443,7 @@ The `.claude/` folder is your project's Claude Code directory for memory, settin
 | Personal preferences | `CLAUDE.md` | ❌ Gitignore |
 | Personal permissions | `settings.local.json` | ❌ Gitignore |
 
-### 3.38.12 Version Control & Backup
+### 3.38.17 Version Control & Backup
 
 **Problem**: Without version control, losing your Claude Code configuration means hours of manual reconfiguration across agents, skills, hooks, and MCP servers.
 
@@ -7488,9 +7488,10 @@ skills-ref validate ./my-skill      # Check frontmatter + naming conventions
 skills-ref to-prompt ./my-skill     # Generate <available_skills> XML for agent prompts
 ```
 
-> **Beyond spec validation**: Two complementary audit tools:
+> **Beyond spec validation**: Three complementary audit tools:
 > - `/audit-agents-skills` — broad quality audit across agents, skills, AND commands (16 criteria, 32-pt weighted grading). Use for general production readiness.
 > - `/eval-skills` — skills-only audit with effort-level inference engine. Discovers all skills, infers the appropriate `effort` level from content analysis, flags mismatches, and prints copy-paste ready frontmatter patches. Use when adding `effort` fields to an existing library or auditing a new project. See `examples/skills/eval-skills/`.
+> - `/eval-rules` — rules-focused audit with interactive usefulness review. Resolves every `paths:` glob pattern against real project files, flags dead or over-broad patterns, then asks you rule-by-rule whether each rule still fires in the right context and whether its content is still accurate. Can apply edits in-place based on your answers. Use for periodic rules hygiene or when a rule fires too often/never. See `examples/skills/eval-rules/`.
 
 ### Skill Quality Gates
 
@@ -25018,4 +25019,4 @@ We'll evaluate and add it to this section if it meets quality criteria.
 
 **Contributions**: Issues and PRs welcome.
 
-**Last updated**: January 2026 | **Version**: 3.38.12
+**Last updated**: January 2026 | **Version**: 3.38.17
