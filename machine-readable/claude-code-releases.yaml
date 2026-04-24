@@ -3,8 +3,8 @@
 # Purpose: Track Claude Code product releases for documentation sync
 # Maintained: Manual updates when new releases are announced
 
-latest: "2.1.118"
-updated: "2026-04-23"
+latest: "2.1.119"
+updated: "2026-04-24"
 
 # ════════════════════════════════════════════════════════════════
 # RELEASES (newest first, condensed highlights only)
@@ -14,6 +14,14 @@ releases:
   # ─────────────────────────────────────────────────────────────
   # 2.1.x Series (January-April 2026)
   # ─────────────────────────────────────────────────────────────
+
+  - version: "2.1.119"
+    date: "2026-04-24"
+    highlights:
+      - "⭐ /config settings (theme, editor mode, verbose, etc.) now persist to ~/.claude/settings.json and participate in project/local/policy override precedence"
+      - "⭐ --from-pr now accepts GitLab merge-request, Bitbucket pull-request, and GitHub Enterprise PR URLs"
+      - "--print mode honors agent tools:/disallowedTools: frontmatter; --agent honors permissionMode; PowerShell auto-approve in permission mode; PostToolUse hooks include duration_ms"
+      - "Security: blockedMarketplaces enforces hostPattern/pathPattern; prUrlTemplate setting; CLAUDE_CODE_HIDE_CWD env var; 30+ bug fixes including CRLF paste, Glob/Grep disappearing on macOS, /plan mode fix, TaskList ordering, Agent worktree stale reuse"
 
   - version: "2.1.118"
     date: "2026-04-23"
